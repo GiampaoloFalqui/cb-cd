@@ -1,0 +1,30 @@
+version: 0.0
+os: linux
+files:
+  - source: /index2.html
+    destination: /usr/share/nginx/html
+    # 2) For all of the files ending in .txt in the /tmp/my-app
+#  folder, but not for the file my-file-3.txt (for example,
+#  just my-file-1.txt and my-file-2.txt),
+#  owner = ec2-user and mode = 444 (-r--r--r--).
+permissions:
+  - object: /usr/share/nginx/html
+    pattern: "index2.html"
+    # except: [my-file-3.txt]
+    owner: www-data
+    mode: 775
+    type:
+      - file
+hooks:
+  BeforeInstall:
+    - location: scripts/install_dependencies
+      timeout: 300
+      runas: root
+    - location: scripts/start_server
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_server
+      timeout: 300
+      runas: root
+
